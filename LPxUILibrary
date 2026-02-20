@@ -9,114 +9,114 @@ function Library:Start()
     local StartTime = os.time()
 
     local ParentUI = (pcall(function() local t = Instance.new("Frame", CoreGui); t:Destroy() end) and CoreGui) or LocalPlayer:WaitForChild("PlayerGui")
+    if ParentUI:FindFirstChild("LaPhat_Official_Library") then ParentUI.LaPhat_Official_Library:Destroy() end
 
-    if ParentUI:FindFirstChild("LaPhat_Library") then ParentUI.LaPhat_Library:Destroy() end
-
-    local ScreenGui = Instance.new("ScreenGui", ParentUI); ScreenGui.Name = "LaPhat_Library"; ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+    local ScreenGui = Instance.new("ScreenGui", ParentUI); ScreenGui.Name = "LaPhat_Official_Library"; ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
 
     local BlueTheme = Color3.fromRGB(0, 162, 255)
     local BG_Main = Color3.fromRGB(15, 15, 15)
-    local BG_Panel = Color3.fromRGB(28, 28, 28)
-    local Font_Logo = Enum.Font.SpecialElite 
-    local Font_OnOff = Enum.Font.LuckiestGuy 
-    local Font_Default = Enum.Font.GothamBold 
+    local BG_Panel = Color3.fromRGB(25, 25, 25)
+    local Font_Bold = Enum.Font.GothamBold 
 
     local function Style(obj, r, s)
         Instance.new("UICorner", obj).CornerRadius = UDim.new(0, r)
-        if s then local st = Instance.new("UIStroke", obj); st.Color = BlueTheme; st.Thickness = 1.8; return st end
+        if s then 
+            local st = Instance.new("UIStroke", obj); st.Color = BlueTheme; st.Thickness = 1.5; st.ApplyStrokeMode = "Border"
+            return st 
+        end
     end
 
     local function Drag(obj)
-        local d, i, s, sp
+        local d, s, sp
         obj.InputBegan:Connect(function(ip) if ip.UserInputType == Enum.UserInputType.MouseButton1 or ip.UserInputType == Enum.UserInputType.Touch then d = true; s = ip.Position; sp = obj.Position end end)
         UIS.InputChanged:Connect(function(ip) if d and (ip.UserInputType == Enum.UserInputType.MouseMovement or ip.UserInputType == Enum.UserInputType.Touch) then local dl = ip.Position - s; obj.Position = UDim2.new(sp.X.Scale, sp.X.Offset + dl.X, sp.Y.Scale, sp.Y.Offset + dl.Y) end end)
-        UIS.InputEnded:Connect(function(ip) if ip.UserInputType == Enum.UserInputType.MouseButton1 or ip.UserInputType == Enum.UserInputType.Touch then d = false end end)
+        UIS.InputEnded:Connect(function() d = false end)
     end
 
     local Main = Instance.new("Frame", ScreenGui)
-    Main.Size = UDim2.new(0, 480, 0, 380); Main.Position = UDim2.new(0.5, -240, 0.5, -190); Main.BackgroundColor3 = BG_Main; Main.Visible = false
-    Style(Main, 12, true); Drag(Main)
+    Main.Size = UDim2.new(0, 480, 0, 400); Main.Position = UDim2.new(0.5, -240, 0.5, -200); Main.BackgroundColor3 = BG_Main; Main.Visible = false
+    Style(Main, 10, true); Drag(Main)
 
-    local Header = Instance.new("Frame", Main); Header.Size = UDim2.new(1, 0, 0, 65); Header.BackgroundTransparency = 1
-    local Logo = Instance.new("TextLabel", Header); Logo.Size = UDim2.new(1, 0, 0, 40); Logo.Text = "LaPhat Hub"; Logo.TextColor3 = BlueTheme; Logo.Font = Font_Logo; Logo.TextSize = 30; Logo.BackgroundTransparency = 1
-    local Info = Instance.new("TextLabel", Header); Info.Size = UDim2.new(1, 0, 0, 20); Info.Position = UDim2.new(0, 0, 0, 40); Info.TextColor3 = Color3.fromRGB(180, 180, 180); Info.Font = Font_Default; Info.TextSize = 11; Info.BackgroundTransparency = 1
+    local Header = Instance.new("Frame", Main); Header.Size = UDim2.new(1, 0, 0, 70); Header.BackgroundTransparency = 1
+    local Logo = Instance.new("TextLabel", Header); Logo.Size = UDim2.new(1, 0, 0, 45); Logo.Text = "LaPhat Hub"; Logo.TextColor3 = BlueTheme; Logo.Font = Enum.Font.SpecialElite; Logo.TextSize = 32; Logo.BackgroundTransparency = 1
+    local Info = Instance.new("TextLabel", Header); Info.Size = UDim2.new(1, 0, 0, 20); Info.Position = UDim2.new(0, 0, 0, 40); Info.TextColor3 = Color3.fromRGB(200, 200, 200); Info.Font = Font_Bold; Info.TextSize = 11; Info.BackgroundTransparency = 1
 
     task.spawn(function()
         while task.wait(1) do
-            local run = os.difftime(os.time(), StartTime)
-            Info.Text = "Ngày: " .. os.date("%d/%m/%Y") .. " | Runtime: " .. string.format("%02d:%02d:%02d", math.floor(run/3600), math.floor((run/60)%60), run%60)
+            if not ScreenGui.Parent then break end
+            local r = os.difftime(os.time(), StartTime)
+            Info.Text = "Ngày: " .. os.date("%d/%m/%Y") .. " | Runtime: " .. string.format("%02d:%02d:%02d", math.floor(r/3600), math.floor((r/60)%60), r%60)
         end
     end)
 
-    local TabH = Instance.new("Frame", Main); TabH.Size = UDim2.new(1, -20, 0, 35); TabH.Position = UDim2.new(0, 10, 0, 70); TabH.BackgroundTransparency = 1
-    local TabL = Instance.new("UIListLayout", TabH); TabL.FillDirection = "Horizontal"; TabL.Padding = UDim.new(0, 8); TabL.VerticalAlignment = "Center"
+    local TabH = Instance.new("Frame", Main); TabH.Size = UDim2.new(1, -20, 0, 35); TabH.Position = UDim2.new(0, 10, 0, 75); TabH.BackgroundTransparency = 1
+    local TabL = Instance.new("UIListLayout", TabH); TabL.FillDirection = "Horizontal"; TabL.Padding = UDim.new(0, 8)
+    local PageC = Instance.new("Frame", Main); PageC.Size = UDim2.new(1, -20, 1, -135); PageC.Position = UDim2.new(0, 10, 0, 120); PageC.BackgroundTransparency = 1
 
-    local PageC = Instance.new("Frame", Main); PageC.Size = UDim2.new(1, -20, 1, -125); PageC.Position = UDim2.new(0, 10, 0, 115); PageC.BackgroundTransparency = 1
-
-    local LPBtn = Instance.new("ImageButton", ScreenGui); LPBtn.Size = UDim2.new(0, 60, 0, 60); LPBtn.Position = UDim2.new(0, 30, 0, 200); LPBtn.BackgroundColor3 = BG_Main
-    Style(LPBtn, 100, true); Drag(LPBtn)
-    local LPT = Instance.new("TextLabel", LPBtn); LPT.Size = UDim2.new(1, 0, 1, 0); LPT.Text = "On"; LPT.TextColor3 = BlueTheme; LPT.Font = Font_OnOff; LPT.TextSize = 22; LPT.BackgroundTransparency = 1; LPT.ZIndex = 10
+    local LPBtn = Instance.new("ImageButton", ScreenGui); LPBtn.Size = UDim2.new(0, 55, 0, 55); LPBtn.Position = UDim2.new(0, 20, 0, 200); LPBtn.BackgroundColor3 = BG_Main; Style(LPBtn, 100, true); Drag(LPBtn)
+    local LPT = Instance.new("TextLabel", LPBtn); LPT.Size = UDim2.new(1, 0, 1, 0); LPT.Text = "On"; LPT.TextColor3 = BlueTheme; LPT.Font = Enum.Font.LuckiestGuy; LPT.TextSize = 20; LPT.BackgroundTransparency = 1; LPT.ZIndex = 10
     LPBtn.MouseButton1Click:Connect(function() Main.Visible = not Main.Visible; LPT.Text = Main.Visible and "Off" or "On" end)
 
     local Tabs = {}
     function Library:CreatePage(name)
-        local p = Instance.new("ScrollingFrame", PageC); p.Size = UDim2.new(1, 0, 1, 0); p.BackgroundTransparency = 1; p.Visible = false; p.ScrollBarThickness = 2; p.ScrollBarImageColor3 = BlueTheme
-        local l = Instance.new("UIListLayout", p); l.Padding = UDim.new(0, 8); l.HorizontalAlignment = "Center"
-        l:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function() p.CanvasSize = UDim2.new(0, 0, 0, l.AbsoluteContentSize.Y + 15) end)
+        local p = Instance.new("ScrollingFrame", PageC); p.Size = UDim2.new(1, 0, 1, 0); p.BackgroundTransparency = 1; p.Visible = false; p.ScrollBarThickness = 2; p.ScrollBarImageColor3 = BlueTheme; p.CanvasSize = UDim2.new(0,0,0,0); p.ClipsDescendants = true
+        local l = Instance.new("UIListLayout", p); l.Padding = UDim.new(0, 10); l.HorizontalAlignment = "Center"
+        l:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function() p.CanvasSize = UDim2.new(0, 0, 0, l.AbsoluteContentSize.Y + 20) end)
 
-        local b = Instance.new("TextButton", TabH); b.Size = UDim2.new(0, 100, 0, 30); b.BackgroundColor3 = BG_Panel; b.Text = name; b.TextColor3 = Color3.fromRGB(150, 150, 150); b.Font = Font_Default; b.TextSize = 11
+        local b = Instance.new("TextButton", TabH); b.Size = UDim2.new(0, 95, 0, 30); b.BackgroundColor3 = BG_Panel; b.Text = name; b.TextColor3 = Color3.fromRGB(150, 150, 150); b.Font = Font_Bold; b.TextSize = 11
         local s = Style(b, 6, true); s.Enabled = false
 
         b.MouseButton1Click:Connect(function()
             for _, v in pairs(Tabs) do v.p.Visible = false; v.s.Enabled = false; v.b.TextColor3 = Color3.fromRGB(150, 150, 150) end
             p.Visible = true; s.Enabled = true; b.TextColor3 = BlueTheme
         end)
-        
         if #Tabs == 0 then p.Visible = true; s.Enabled = true; b.TextColor3 = BlueTheme end
         table.insert(Tabs, {p = p, b = b, s = s})
 
         local Funcs = {}
-        function Funcs:AddSection(txt)
-            local sec = Instance.new("TextLabel", p); sec.Size = UDim2.new(0.96, 0, 0, 30); sec.Text = "─── " .. txt .. " ───"; sec.TextColor3 = BlueTheme; sec.Font = Font_Default; sec.TextSize = 12; sec.BackgroundTransparency = 1
+        function Funcs:AddSection(t)
+            local sec = Instance.new("TextLabel", p); sec.Size = UDim2.new(0.96, 0, 0, 30); sec.Text = "─── " .. t .. " ───"; sec.TextColor3 = BlueTheme; sec.Font = Font_Bold; sec.TextSize = 12; sec.BackgroundTransparency = 1
         end
-        function Funcs:AddLabel(txt)
-            local lab = Instance.new("TextLabel", p); lab.Size = UDim2.new(0.96, 0, 0, 20); lab.Text = txt; lab.TextColor3 = Color3.fromRGB(200, 200, 200); lab.Font = Font_Default; lab.TextSize = 12; lab.BackgroundTransparency = 1; lab.TextXAlignment = "Left"
+        function Funcs:AddLabel(t)
+            local lab = Instance.new("TextLabel", p); lab.Size = UDim2.new(0.96, 0, 0, 20); lab.Text = t; lab.TextColor3 = Color3.fromRGB(220, 220, 220); lab.Font = Font_Bold; lab.TextSize = 12; lab.BackgroundTransparency = 1; lab.TextXAlignment = "Left"
         end
-        function Funcs:AddButton(txt, cb)
-            local btn = Instance.new("TextButton", p); btn.Size = UDim2.new(0.96, 0, 0, 35); btn.BackgroundColor3 = Color3.fromRGB(35, 35, 35); btn.Text = txt; btn.TextColor3 = BlueTheme; btn.Font = Font_Default; btn.TextSize = 13; Style(btn, 6, true)
+        function Funcs:AddButton(t, cb)
+            local btn = Instance.new("TextButton", p); btn.Size = UDim2.new(0.96, 0, 0, 38); btn.BackgroundColor3 = BG_Panel; btn.Text = t; btn.TextColor3 = Color3.new(1,1,1); btn.Font = Font_Bold; btn.TextSize = 13; Style(btn, 8, true)
             btn.MouseButton1Click:Connect(cb)
         end
-        function Funcs:AddToggle(txt, cb)
-            local f = Instance.new("Frame", p); f.Size = UDim2.new(0.96, 0, 0, 40); f.BackgroundColor3 = BG_Panel; Style(f, 6, false)
-            local tl = Instance.new("TextLabel", f); tl.Size = UDim2.new(1, -60, 1, 0); tl.Position = UDim2.new(0, 12, 0, 0); tl.Text = txt; tl.TextColor3 = Color3.new(1,1,1); tl.Font = Font_Default; tl.TextSize = 13; tl.TextXAlignment = "Left"; tl.BackgroundTransparency = 1
-            local tb = Instance.new("TextButton", f); tb.Size = UDim2.new(0, 36, 0, 18); tb.Position = UDim2.new(1, -45, 0.5, -9); tb.BackgroundColor3 = Color3.fromRGB(60,60,60); tb.Text = ""; Style(tb, 100, false)
-            local ball = Instance.new("Frame", tb); ball.Size = UDim2.new(0, 14, 0, 14); ball.Position = UDim2.new(0, 2, 0.5, -7); ball.BackgroundColor3 = Color3.new(1,1,1); Style(ball, 100, false)
+        function Funcs:AddToggle(t, cb)
+            local f = Instance.new("Frame", p); f.Size = UDim2.new(0.96, 0, 0, 42); f.BackgroundColor3 = BG_Panel; Style(f, 8, false)
+            local tl = Instance.new("TextLabel", f); tl.Size = UDim2.new(1, -60, 1, 0); tl.Position = UDim2.new(0, 12, 0, 0); tl.Text = t; tl.TextColor3 = Color3.new(1,1,1); tl.Font = Font_Bold; tl.TextSize = 13; tl.TextXAlignment = "Left"; tl.BackgroundTransparency = 1
+            local tb = Instance.new("TextButton", f); tb.Size = UDim2.new(0, 38, 0, 20); tb.Position = UDim2.new(1, -50, 0.5, -10); tb.BackgroundColor3 = Color3.fromRGB(60,60,60); tb.Text = ""; Style(tb, 100, false)
+            local ball = Instance.new("Frame", tb); ball.Size = UDim2.new(0, 16, 0, 16); ball.Position = UDim2.new(0, 2, 0.5, -8); ball.BackgroundColor3 = Color3.new(1,1,1); Style(ball, 100, false)
             local act = false
-            tb.MouseButton1Click:Connect(function() act = not act; TweenService:Create(ball, TweenInfo.new(0.2), {Position = act and UDim2.new(1,-16,0.5,-7) or UDim2.new(0,2,0.5,-7)}):Play(); tb.BackgroundColor3 = act and BlueTheme or Color3.fromRGB(60,60,60); cb(act) end)
+            tb.MouseButton1Click:Connect(function() act = not act; TweenService:Create(ball, TweenInfo.new(0.2), {Position = act and UDim2.new(1,-18,0.5,-8) or UDim2.new(0,2,0.5,-8)}):Play(); tb.BackgroundColor3 = act and BlueTheme or Color3.fromRGB(60,60,60); cb(act) end)
         end
-        function Funcs:AddSlider(txt, min, max, def, cb)
-            local f = Instance.new("Frame", p); f.Size = UDim2.new(0.96, 0, 0, 55); f.BackgroundColor3 = BG_Panel; Style(f, 6, false)
-            local sl = Instance.new("TextLabel", f); sl.Size = UDim2.new(1, -20, 0, 25); sl.Position = UDim2.new(0, 12, 0, 5); sl.Text = txt .. ": " .. def; sl.TextColor3 = Color3.new(1,1,1); sl.Font = Font_Default; sl.TextSize = 12; sl.TextXAlignment = "Left"; sl.BackgroundTransparency = 1
+        function Funcs:AddSlider(t, min, max, def, cb)
+            local f = Instance.new("Frame", p); f.Size = UDim2.new(0.96, 0, 0, 58); f.BackgroundColor3 = BG_Panel; Style(f, 8, false)
+            local sl = Instance.new("TextLabel", f); sl.Size = UDim2.new(1, -20, 0, 25); sl.Position = UDim2.new(0, 12, 0, 5); sl.Text = t .. ": " .. def; sl.TextColor3 = Color3.new(1,1,1); sl.Font = Font_Bold; sl.TextSize = 12; sl.TextXAlignment = "Left"; sl.BackgroundTransparency = 1
             local bg = Instance.new("Frame", f); bg.Size = UDim2.new(0.9, 0, 0, 4); bg.Position = UDim2.new(0.05, 0, 0.75, 0); bg.BackgroundColor3 = Color3.fromRGB(50,50,50); Style(bg, 10, false)
             local fill = Instance.new("Frame", bg); fill.Size = UDim2.new((def-min)/(max-min), 0, 1, 0); fill.BackgroundColor3 = BlueTheme; Style(fill, 10, false)
-            local dbtn = Instance.new("TextButton", bg); dbtn.Size = UDim2.new(0, 14, 0, 14); dbtn.Position = UDim2.new((def-min)/(max-min), -7, 0.5, -7); dbtn.Text = ""; dbtn.BackgroundColor3 = Color3.new(1,1,1); Style(dbtn, 100, false)
+            local dbtn = Instance.new("TextButton", bg); dbtn.Size = UDim2.new(0, 16, 0, 16); dbtn.Position = UDim2.new((def-min)/(max-min), -8, 0.5, -8); dbtn.Text = ""; dbtn.BackgroundColor3 = Color3.new(1,1,1); Style(dbtn, 100, false)
             local mv = false
-            local function Upd() local ps = math.clamp((UIS:GetMouseLocation().X - bg.AbsolutePosition.X) / bg.AbsoluteSize.X, 0, 1); fill.Size = UDim2.new(ps, 0, 1, 0); dbtn.Position = UDim2.new(ps, -7, 0.5, -7); local v = math.floor(min + (max - min) * ps); sl.Text = txt .. ": " .. v; cb(v) end
+            local function Upd() local ps = math.clamp((UIS:GetMouseLocation().X - bg.AbsolutePosition.X) / bg.AbsoluteSize.X, 0, 1); fill.Size = UDim2.new(ps, 0, 1, 0); dbtn.Position = UDim2.new(ps, -8, 0.5, -8); local v = math.floor(min + (max - min) * ps); sl.Text = t .. ": " .. v; cb(v) end
             dbtn.InputBegan:Connect(function(ip) if ip.UserInputType == Enum.UserInputType.MouseButton1 or ip.UserInputType == Enum.UserInputType.Touch then mv = true end end)
             UIS.InputChanged:Connect(function(ip) if mv and (ip.UserInputType == Enum.UserInputType.MouseMovement or ip.UserInputType == Enum.UserInputType.Touch) then Upd() end end)
-            UIS.InputEnded:Connect(function(ip) if ip.UserInputType == Enum.UserInputType.MouseButton1 or ip.UserInputType == Enum.UserInputType.Touch then mv = false end end)
+            UIS.InputEnded:Connect(function() mv = false end)
         end
-        function Funcs:AddDropdown(txt, list, cb)
-            local f = Instance.new("Frame", p); f.Size = UDim2.new(0.96, 0, 0, 40); f.BackgroundColor3 = BG_Panel; f.ClipsDescendants = true; Style(f, 6, false)
-            local drb = Instance.new("TextButton", f); drb.Size = UDim2.new(1, 0, 0, 40); drb.BackgroundTransparency = 1; drb.Text = txt .. " : ▼"; drb.TextColor3 = Color3.new(1,1,1); drb.Font = Font_Default; drb.TextSize = 13
-            local d f = Instance.new("Frame", f); df.Position = UDim2.new(0, 0, 0, 40); df.Size = UDim2.new(1, 0, 0, #list * 25); df.BackgroundTransparency = 1; Instance.new("UIListLayout", df)
+        function Funcs:AddDropdown(t, list, cb)
+            local df = Instance.new("Frame", p); df.Size = UDim2.new(0.96, 0, 0, 42); df.BackgroundColor3 = BG_Panel; df.ClipsDescendants = true; Style(df, 8, false); df.ZIndex = 5
+            local drb = Instance.new("TextButton", df); drb.Size = UDim2.new(1, 0, 0, 42); drb.BackgroundTransparency = 1; drb.Text = t .. " : ▼"; drb.TextColor3 = Color3.new(1,1,1); drb.Font = Font_Bold; drb.TextSize = 13; drb.ZIndex = 6
+            local listH = Instance.new("Frame", df); listH.Position = UDim2.new(0, 0, 0, 42); listH.Size = UDim2.new(1, 0, 0, #list * 32); listH.BackgroundTransparency = 1
+            Instance.new("UIListLayout", listH)
             for _, v in pairs(list) do
-                local o = Instance.new("TextButton", df); o.Size = UDim2.new(1, 0, 0, 25); o.BackgroundColor3 = Color3.fromRGB(40,40,40); o.Text = v; o.TextColor3 = Color3.new(0.8,0.8,0.8); o.Font = Font_Default; o.TextSize = 11; o.BorderSizePixel = 0
-                o.MouseButton1Click:Connect(function() drb.Text = txt .. " : " .. v; f.Size = UDim2.new(0.96, 0, 0, 40); cb(v) end)
+                local o = Instance.new("TextButton", listH); o.Size = UDim2.new(1, 0, 0, 32); o.BackgroundColor3 = Color3.fromRGB(35, 35, 35); o.Text = tostring(v); o.TextColor3 = Color3.fromRGB(220, 220, 220); o.Font = Font_Bold; o.TextSize = 12; o.BorderSizePixel = 0; o.ZIndex = 7
+                o.MouseButton1Click:Connect(function() drb.Text = t .. " : " .. v; df.Size = UDim2.new(0.96, 0, 0, 42); cb(v) end)
             end
             local op = false
-            drb.MouseButton1Click:Connect(function() op = not op; f.Size = op and UDim2.new(0.96, 0, 0, 40 + (#list * 25)) or UDim2.new(0.96, 0, 0, 40) end)
+            drb.MouseButton1Click:Connect(function() op = not op; df.Size = op and UDim2.new(0.96, 0, 0, 42 + (#list * 32)) or UDim2.new(0.96, 0, 0, 42) end)
         end
+
         return Funcs
     end
     return Library
