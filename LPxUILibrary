@@ -1,6 +1,8 @@
 local Library = {}
 
-function Library:Start()
+function Library:CreateWindow(Settings)
+    local Name = Settings.Name or "LaPhat Hub"
+    
     local Players = game:GetService("Players")
     local UIS = game:GetService("UserInputService")
     local TweenService = game:GetService("TweenService")
@@ -9,9 +11,9 @@ function Library:Start()
     local StartTime = os.time()
 
     local ParentUI = (pcall(function() local t = Instance.new("Frame", CoreGui); t:Destroy() end) and CoreGui) or LocalPlayer:WaitForChild("PlayerGui")
-    if ParentUI:FindFirstChild("LaPhat_Official_Library") then ParentUI.LaPhat_Official_Library:Destroy() end
+    if ParentUI:FindFirstChild(Name) then ParentUI[Name]:Destroy() end
 
-    local ScreenGui = Instance.new("ScreenGui", ParentUI); ScreenGui.Name = "LaPhat_Official_Library"; ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+    local ScreenGui = Instance.new("ScreenGui", ParentUI); ScreenGui.Name = Name; ScreenGui.ZIndexBehavior = Enum.ZIndexBehavior.Global
 
     local BlueTheme = Color3.fromRGB(0, 162, 255)
     local BG_Main = Color3.fromRGB(15, 15, 15)
@@ -34,11 +36,11 @@ function Library:Start()
     end
 
     local Main = Instance.new("Frame", ScreenGui)
-    Main.Size = UDim2.new(0, 480, 0, 400); Main.Position = UDim2.new(0.5, -240, 0.5, -200); Main.BackgroundColor3 = BG_Main; Main.Visible = false
+    Main.Size = UDim2.new(0, 480, 0, 400); Main.Position = UDim2.new(0.5, -240, 0.5, -200); Main.BackgroundColor3 = BG_Main; Main.Visible = true
     Style(Main, 10, true); Drag(Main)
 
     local Header = Instance.new("Frame", Main); Header.Size = UDim2.new(1, 0, 0, 70); Header.BackgroundTransparency = 1
-    local Logo = Instance.new("TextLabel", Header); Logo.Size = UDim2.new(1, 0, 0, 45); Logo.Text = "LaPhat Hub"; Logo.TextColor3 = BlueTheme; Logo.Font = Enum.Font.SpecialElite; Logo.TextSize = 32; Logo.BackgroundTransparency = 1
+    local Logo = Instance.new("TextLabel", Header); Logo.Size = UDim2.new(1, 0, 0, 45); Logo.Text = Name; Logo.TextColor3 = BlueTheme; Logo.Font = Enum.Font.SpecialElite; Logo.TextSize = 32; Logo.BackgroundTransparency = 1
     local Info = Instance.new("TextLabel", Header); Info.Size = UDim2.new(1, 0, 0, 20); Info.Position = UDim2.new(0, 0, 0, 40); Info.TextColor3 = Color3.fromRGB(200, 200, 200); Info.Font = Font_Bold; Info.TextSize = 11; Info.BackgroundTransparency = 1
 
     task.spawn(function()
@@ -50,15 +52,17 @@ function Library:Start()
     end)
 
     local TabH = Instance.new("Frame", Main); TabH.Size = UDim2.new(1, -20, 0, 35); TabH.Position = UDim2.new(0, 10, 0, 75); TabH.BackgroundTransparency = 1
-    local TabL = Instance.new("UIListLayout", TabH); TabL.FillDirection = "Horizontal"; TabL.Padding = UDim.new(0, 8)
+    Instance.new("UIListLayout", TabH).FillDirection = "Horizontal"; TabH.UIListLayout.Padding = UDim.new(0, 8)
     local PageC = Instance.new("Frame", Main); PageC.Size = UDim2.new(1, -20, 1, -135); PageC.Position = UDim2.new(0, 10, 0, 120); PageC.BackgroundTransparency = 1
 
     local LPBtn = Instance.new("ImageButton", ScreenGui); LPBtn.Size = UDim2.new(0, 55, 0, 55); LPBtn.Position = UDim2.new(0, 20, 0, 200); LPBtn.BackgroundColor3 = BG_Main; Style(LPBtn, 100, true); Drag(LPBtn)
     local LPT = Instance.new("TextLabel", LPBtn); LPT.Size = UDim2.new(1, 0, 1, 0); LPT.Text = "On"; LPT.TextColor3 = BlueTheme; LPT.Font = Enum.Font.LuckiestGuy; LPT.TextSize = 20; LPT.BackgroundTransparency = 1; LPT.ZIndex = 10
     LPBtn.MouseButton1Click:Connect(function() Main.Visible = not Main.Visible; LPT.Text = Main.Visible and "Off" or "On" end)
 
+    local Window = {}
     local Tabs = {}
-    function Library:CreatePage(name)
+    
+    function Window:CreatePage(name)
         local p = Instance.new("ScrollingFrame", PageC); p.Size = UDim2.new(1, 0, 1, 0); p.BackgroundTransparency = 1; p.Visible = false; p.ScrollBarThickness = 2; p.ScrollBarImageColor3 = BlueTheme; p.CanvasSize = UDim2.new(0,0,0,0); p.ClipsDescendants = true
         local l = Instance.new("UIListLayout", p); l.Padding = UDim.new(0, 10); l.HorizontalAlignment = "Center"
         l:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function() p.CanvasSize = UDim2.new(0, 0, 0, l.AbsoluteContentSize.Y + 20) end)
@@ -116,10 +120,9 @@ function Library:Start()
             local op = false
             drb.MouseButton1Click:Connect(function() op = not op; df.Size = op and UDim2.new(0.96, 0, 0, 42 + (#list * 32)) or UDim2.new(0.96, 0, 0, 42) end)
         end
-
         return Funcs
     end
-    return Library
+    return Window
 end
 
-return Library:Start()
+return Library
