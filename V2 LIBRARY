@@ -1,0 +1,150 @@
+local Library = {}
+
+function Library:CreateWindow(Settings)
+    local Name = Settings.Name or "LaPhat | HUB"
+    local UIS = game:GetService("UserInputService")
+    local TweenService = game:GetService("TweenService")
+    local CoreGui = game:GetService("CoreGui")
+    local Players = game:GetService("Players")
+    local RunService = game:GetService("RunService")
+    local lp = Players.LocalPlayer
+    
+    local StartTime = os.time()
+
+    -- Xóa UI cũ nếu trùng tên
+    for _, v in pairs(CoreGui:GetChildren()) do
+        if v.Name == Name then v:Destroy() end
+    end
+
+    local ScreenGui = Instance.new("ScreenGui", CoreGui); ScreenGui.Name = Name
+    local AccentColor = Color3.fromRGB(0, 162, 255)
+    local MainBG = Color3.fromRGB(10, 10, 10)
+    local SectionBG = Color3.fromRGB(15, 15, 15)
+
+    -- Function tạo Corner và Stroke
+    local function Style(obj, r, s)
+        Instance.new("UICorner", obj).CornerRadius = UDim.new(0, r)
+        if s then 
+            local st = Instance.new("UIStroke", obj); st.Color = AccentColor; st.Thickness = 1.2; st.ApplyStrokeMode = "Border"; st.Transparency = 0.6
+        end
+    end
+
+    -- Function kéo thả
+    local function EnableDrag(obj)
+        local dragging, dragInput, dragStart, startPos
+        obj.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+                dragging = true; dragStart = input.Position; startPos = obj.Position
+                input.Changed:Connect(function() if input.UserInputState == Enum.UserInputState.End then dragging = false end end)
+            end
+        end)
+        obj.InputChanged:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then dragInput = input end
+        end)
+        UIS.InputChanged:Connect(function(input)
+            if input == dragInput and dragging then
+                local delta = input.Position - dragStart
+                obj.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+            end
+        end)
+    end
+
+    -- Khung chính
+    local Main = Instance.new("Frame", ScreenGui)
+    Main.Size = UDim2.new(0, 680, 0, 380); Main.Position = UDim2.new(0.5, -340, 0.5, -190); Main.BackgroundColor3 = MainBG; Style(Main, 10, true); EnableDrag(Main)
+
+    -- Header (Logo tối giản)
+    local Header = Instance.new("Frame", Main)
+    Header.Size = UDim2.new(1, 0, 0, 50); Header.BackgroundTransparency = 1
+    
+    local Logo = Instance.new("TextLabel", Header)
+    Logo.Size = UDim2.new(0, 150, 1, 0); Logo.Position = UDim2.new(0, 15, 0, 0); Logo.Text = "LaPhat | HUB"; Logo.TextColor3 = AccentColor; Logo.Font = Enum.Font.GothamBold; Logo.TextSize = 20; Logo.BackgroundTransparency = 1; Logo.TextXAlignment = "Left"
+    
+    local Status = Instance.new("TextLabel", Header)
+    Status.Size = UDim2.new(0, 150, 0, 20); Status.Position = UDim2.new(0.5, -75, 0, 15); Status.Text = "Status: Undetected"; Status.TextColor3 = Color3.fromRGB(0, 255, 100); Status.Font = Enum.Font.GothamBold; Status.TextSize = 11; Status.BackgroundTransparency = 1
+
+    -- Footer
+    local Footer = Instance.new("Frame", Main)
+    Footer.Size = UDim2.new(1, -30, 0, 25); Footer.Position = UDim2.new(0, 15, 1, -30); Footer.BackgroundTransparency = 1
+    
+    local StatsLabel = Instance.new("TextLabel", Footer)
+    StatsLabel.Size = UDim2.new(0.4, 0, 1, 0); StatsLabel.BackgroundTransparency = 1; StatsLabel.TextColor3 = Color3.fromRGB(150, 150, 150); StatsLabel.TextSize = 10; StatsLabel.Font = Enum.Font.Code; StatsLabel.TextXAlignment = "Left"
+    
+    local TimeLabel = Instance.new("TextLabel", Footer)
+    TimeLabel.Size = UDim2.new(0.6, 0, 1, 0); TimeLabel.Position = UDim2.new(0.4, 0, 0, 0); TimeLabel.BackgroundTransparency = 1; TimeLabel.TextColor3 = Color3.fromRGB(150, 150, 150); TimeLabel.TextSize = 10; TimeLabel.Font = Enum.Font.Code; TimeLabel.TextXAlignment = "Right"
+
+    RunService.RenderStepped:Connect(function()
+        local fps = math.floor(1/RunService.RenderStepped:Wait())
+        local ping = tonumber(game:GetService("Stats").Network.ServerStatsItem["Data Ping"]:GetValueString():split(" ")[1]) or 0
+        local timeElapsed = os.time() - StartTime
+        StatsLabel.Text = string.format("FPS: %d | PING: %dms", fps, ping)
+        TimeLabel.Text = string.format("RUN: %02d:%02d:%02d | %s", math.floor(timeElapsed/3600), math.floor((timeElapsed%3600)/60), timeElapsed%60, os.date("%X"))
+    end)
+
+    -- Nút bật/tắt (Toggle GUI)
+    local ToggleBtn = Instance.new("TextButton", ScreenGui)
+    ToggleBtn.Size = UDim2.new(0, 55, 0, 55); ToggleBtn.Position = UDim2.new(0, 20, 0, 200); ToggleBtn.BackgroundColor3 = MainBG; ToggleBtn.Text = "OFF"; ToggleBtn.TextColor3 = AccentColor; ToggleBtn.Font = Enum.Font.LuckiestGuy; ToggleBtn.TextSize = 16; Style(ToggleBtn, 100, true); EnableDrag(ToggleBtn)
+    ToggleBtn.MouseButton1Click:Connect(function() Main.Visible = not Main.Visible; ToggleBtn.Text = Main.Visible and "OFF" or "ON" end)
+
+    local Container = Instance.new("Frame", Main)
+    Container.Size = UDim2.new(1, -20, 1, -140); Container.Position = UDim2.new(0, 10, 0, 55); Container.BackgroundTransparency = 1
+
+    local TabBar = Instance.new("Frame", Main)
+    TabBar.Size = UDim2.new(1, -20, 0, 40); TabBar.Position = UDim2.new(0, 10, 1, -75); TabBar.BackgroundTransparency = 1
+    local TabList = Instance.new("UIListLayout", TabBar); TabList.FillDirection = "Horizontal"; TabList.Padding = UDim.new(0, 6); TabList.HorizontalAlignment = "Center"
+
+    local Window = {}; local Tabs = {}
+
+    function Window:CreateTab(tabname)
+        local Page = Instance.new("Frame", Container); Page.Size = UDim2.new(1, 0, 1, 0); Page.BackgroundTransparency = 1; Page.Visible = false
+        Instance.new("UIListLayout", Page).FillDirection = "Horizontal"; Page.UIListLayout.Padding = UDim.new(0, 6)
+
+        local TabBtn = Instance.new("TextButton", TabBar); TabBtn.Size = UDim2.new(0, 100, 1, 0); TabBtn.BackgroundColor3 = SectionBG; TabBtn.Text = tabname; TabBtn.TextColor3 = Color3.fromRGB(150,150,150); TabBtn.Font = Enum.Font.GothamBold; TabBtn.TextSize = 11; Style(TabBtn, 6, true)
+
+        TabBtn.MouseButton1Click:Connect(function()
+            for _, v in pairs(Tabs) do v.Page.Visible = false; v.Btn.TextColor3 = Color3.fromRGB(150,150,150) end
+            Page.Visible = true; TabBtn.TextColor3 = AccentColor
+        end)
+        if #Tabs == 0 then Page.Visible = true; TabBtn.TextColor3 = AccentColor end
+        table.insert(Tabs, {Page = Page, Btn = TabBtn})
+
+        local TabFuncs = {}
+        function TabFuncs:AddColumn(title)
+            local Column = Instance.new("ScrollingFrame", Page); Column.Size = UDim2.new(0.24, 0, 1, 0); Column.BackgroundColor3 = SectionBG; Column.ScrollBarThickness = 2; Column.CanvasSize = UDim2.new(0,0,0,0); Style(Column, 6, false)
+            local ColL = Instance.new("UIListLayout", Column); ColL.Padding = UDim.new(0, 5); ColL.HorizontalAlignment = "Center"
+            ColL:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function() Column.CanvasSize = UDim2.new(0, 0, 0, ColL.AbsoluteContentSize.Y + 10) end)
+            
+            local Sect = Instance.new("TextLabel", Column); Sect.Size = UDim2.new(1,0,0,25); Sect.Text = title; Sect.TextColor3 = AccentColor; Sect.Font = Enum.Font.GothamBold; Sect.TextSize = 12; Sect.BackgroundTransparency = 1
+
+            local Item = {}
+            function Item:AddLabel(t)
+                local l = Instance.new("TextLabel", Column); l.Size = UDim2.new(0.9,0,0,20); l.Text = t; l.TextColor3 = Color3.fromRGB(200,200,200); l.Font = Enum.Font.Gotham; l.TextSize = 10; l.BackgroundTransparency = 1; return l
+            end
+            function Item:AddButton(t, cb)
+                local b = Instance.new("TextButton", Column); b.Size = UDim2.new(0.92,0,0,32); b.BackgroundColor3 = Color3.fromRGB(25,25,25); b.Text = t; b.TextColor3 = Color3.new(1,1,1); b.Font = Enum.Font.Gotham; b.TextSize = 11; Style(b,4,false); b.MouseButton1Click:Connect(cb)
+            end
+            function Item:AddToggle(t, cb)
+                local f = Instance.new("Frame", Column); f.Size = UDim2.new(0.92,0,0,32); f.BackgroundColor3 = Color3.fromRGB(25,25,25); Style(f,4,false)
+                local tl = Instance.new("TextLabel", f); tl.Size = UDim2.new(1,-30,1,0); tl.Position = UDim2.new(0,6,0,0); tl.Text = t; tl.TextColor3 = Color3.new(1,1,1); tl.Font = Enum.Font.Gotham; tl.TextSize = 10; tl.TextXAlignment = "Left"; tl.BackgroundTransparency = 1
+                local tb = Instance.new("TextButton", f); tb.Size = UDim2.new(0,16,0,16); tb.Position = UDim2.new(1,-22,0.5,-8); tb.BackgroundColor3 = Color3.fromRGB(60,60,60); tb.Text = ""; Style(tb,4,false)
+                local act = false; tb.MouseButton1Click:Connect(function() act = not act; tb.BackgroundColor3 = act and AccentColor or Color3.fromRGB(60,60,60); cb(act) end)
+            end
+            function Item:AddSlider(t, min, max, def, cb)
+                local f = Instance.new("Frame", Column); f.Size = UDim2.new(0.92,0,0,40); f.BackgroundTransparency = 1
+                local tl = Instance.new("TextLabel", f); tl.Size = UDim2.new(1,0,0,18); tl.Text = t..": "..def; tl.TextColor3 = Color3.new(1,1,1); tl.Font = Enum.Font.Gotham; tl.TextSize = 9; tl.BackgroundTransparency = 1
+                local sliderBtn = Instance.new("TextButton", f); sliderBtn.Size = UDim2.new(1,0,0,15); sliderBtn.Position = UDim2.new(0,0,0.6,0); sliderBtn.BackgroundTransparency = 1; sliderBtn.Text = ""
+                local bg = Instance.new("Frame", sliderBtn); bg.Size = UDim2.new(1,0,0,4); bg.Position = UDim2.new(0,0,0.5,-2); bg.BackgroundColor3 = Color3.fromRGB(50,50,50); bg.BorderSizePixel = 0
+                local fill = Instance.new("Frame", bg); fill.Size = UDim2.new((def-min)/(max-min),0,1,0); fill.BackgroundColor3 = AccentColor; fill.BorderSizePixel = 0
+                local function Upd() local m = UIS:GetMouseLocation().X; local p = bg.AbsolutePosition.X; local w = bg.AbsoluteSize.X; local pc = math.clamp((m - p) / w, 0, 1); local v = math.floor(min + (max - min) * pc); fill.Size = UDim2.new(pc, 0, 1, 0); tl.Text = t .. ": " .. v; cb(v) end
+                local dr = false; sliderBtn.InputBegan:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then dr = true; Upd() end end)
+                UIS.InputChanged:Connect(function(i) if dr and i.UserInputType == Enum.UserInputType.MouseMovement then Upd() end end)
+                UIS.InputEnded:Connect(function(i) if i.UserInputType == Enum.UserInputType.MouseButton1 then dr = false end end)
+            end
+            return Item
+        end
+        return TabFuncs
+    end
+    return Window
+end
+
+return Library
